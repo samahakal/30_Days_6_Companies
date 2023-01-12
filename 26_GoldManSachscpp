@@ -1,0 +1,79 @@
+class sam{
+public:
+    string name;
+    int time;
+    int amount;
+    string city;
+    string tran;
+    bool marked;
+
+    sam(string n,int t,int amt,string c,string tr){
+        name = n;
+        time = t;
+        amount = amt;
+        city = c;
+        tran = tr;
+        marked = false;
+    }
+};
+
+class Solution {
+public:
+    vector<string> invalidTransactions(vector<string>& transactions) {
+        if(transactions.empty()){
+            return {};
+        }
+
+        int n = transactions.size();
+        vector<bool>isValid(n,true);
+        vector<sam>inputTrans;
+
+
+        for(auto st : transactions){
+            istringstream ss(st);
+            string token = "";
+
+            getline(ss,token,',');
+            string name = token;
+
+            getline(ss,token,',');
+            int time = stoi(token);
+
+            getline(ss,token,',');
+            int amount = stoi(token);
+
+            getline(ss,token,',');
+            string city = token;
+
+            sam newtrans(name,time,amount,city,st);
+            inputTrans.push_back(newtrans);
+        }
+
+        for(int i=0;i<n;i++){
+            if(inputTrans[i].amount > 1000){
+                isValid[i] = false;
+            }
+        }
+        
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(i==j) continue;
+
+                int timeDiff = abs(inputTrans[j].time - inputTrans[i].time);
+                if(timeDiff <= 60 and inputTrans[j].city != inputTrans[i].city and inputTrans[j].name == inputTrans[i].name){
+                    isValid[i] = false;
+                    isValid[j] = false;
+                }
+            }
+        }
+
+        vector<string>result;
+        for(int i=0;i<n;i++){
+            if(isValid[i] == false){
+                result.push_back(transactions[i]);
+            }
+        }
+        
+        return result;
+    }
+};
